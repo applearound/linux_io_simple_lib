@@ -1,1 +1,1 @@
-# 一些 Linux IO 库的使用样例
+# Some sample of Linux I/O lib
