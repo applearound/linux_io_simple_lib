@@ -1,10 +1,10 @@
 #include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define MAX_EVENTS 128
 
@@ -42,11 +42,8 @@ int init_socket() {
 
   const struct sockaddr_in server_bind_addr = {
       .sin_family = AF_INET,
-      .sin_addr = {
-          .s_addr = htonl(INADDR_LOOPBACK)
-      },
-      .sin_port = htons(1080)
-  };
+      .sin_addr = {.s_addr = htonl(INADDR_LOOPBACK)},
+      .sin_port = htons(1080)};
 
   if (bind(server_socket, (struct sockaddr *)&server_bind_addr,
            sizeof(server_bind_addr)) == -1) {
@@ -90,17 +87,19 @@ int main(void) {
       return 1;
     }
 
+    struct sockaddr client_sockaddr;
+    socklen_t client_socklen;
+
     for (int n = 0; n < nfds; n++) {
       if (events[n].data.fd == socketfd) {
-        struct sockaddr client_sockaddr;
-        socklen_t client_socklen;
 
-        const int client_sock = accept(socketfd, &client_sockaddr,
-                                       &client_socklen);
+        const int client_sock =
+            accept(socketfd, &client_sockaddr, &client_socklen);
         if (client_sock == -1) {
           perror("accept");
           return 1;
         }
+
         // 使用 EPOLLET 要求 fd 必须为 O_NONBLOCK
         set_nonblocking(client_sock);
 

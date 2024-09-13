@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <liburing.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <unistd.h>
+#include <liburing.h>
+#include <stdio.h>
+#include <sys/socket.h>
 #include <threads.h>
+#include <unistd.h>
 
 struct client_handler_params {
   int client_fd;
@@ -39,11 +39,8 @@ int main(void) {
 
   const struct sockaddr_in server_bind_addr = {
       .sin_family = AF_INET,
-      .sin_addr = {
-          .s_addr = htonl(INADDR_LOOPBACK)
-      },
-      .sin_port = htons(1080)
-  };
+      .sin_addr = {.s_addr = htonl(INADDR_LOOPBACK)},
+      .sin_port = htons(1080)};
 
   if (bind(server_socket, (struct sockaddr *)&server_bind_addr,
            sizeof(server_bind_addr)) == -1) {
@@ -59,20 +56,17 @@ int main(void) {
   struct sockaddr client_sockaddr;
   socklen_t client_socklen;
   while (true) {
-    const int client_fd = accept(server_socket,
-                                 &client_sockaddr,
-                                 &client_socklen);
+    const int client_fd =
+        accept(server_socket, &client_sockaddr, &client_socklen);
     if (client_fd == -1) {
       perror("accept");
       return 1;
     }
 
     thrd_t client_thread;
-    struct client_handler_params params = {
-        .client_fd = client_fd,
-        .client_sockaddr = client_sockaddr,
-        .client_socklen = client_socklen
-    };
+    struct client_handler_params params = {.client_fd = client_fd,
+                                           .client_sockaddr = client_sockaddr,
+                                           .client_socklen = client_socklen};
 
     const int ret = thrd_create(&client_thread, client_handler, &params);
 

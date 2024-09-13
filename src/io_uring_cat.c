@@ -1,11 +1,11 @@
-#include <stdio.h>
 #include <fcntl.h>
 #include <liburing.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
 
 #define QUEUE_SIZE 1
-#define BLOCK_SZ   1024
+#define BLOCK_SZ 1024
 
 struct file_info {
   __off_t file_size;
